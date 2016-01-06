@@ -13,10 +13,18 @@ class App {
     const config = this.config;
 
     return function * buildController (next) {
-      const controller = new klass(this, config);
-      return yield controller.get();
-    }
+      const ctx = this;
+
+      const props = {
+        ctx,
+        config,
+      };
+
+      const controller = new klass(props);
+      return yield controller.get(next);
+    };
   }
+
 }
 
 export default App;

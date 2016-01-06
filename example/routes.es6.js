@@ -5,9 +5,9 @@ function routes (app) {
   const router = { app };
 
   router.get('/', app.get(Index));
-  router.get('/r/:subreddit', app.get(Listing));
+  router.get('/r/:subreddit', app.get(Index));
 
-  router.get('/r/:subreddit/comments/:listingId/:listingTitle/:listingId', listingController.get);
+  router.get('/r/:subreddit/comments/:listingId/:listingTitle/:listingId', app.get(Listing));
 }
 
 export default routes;

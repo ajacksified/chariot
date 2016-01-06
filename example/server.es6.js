@@ -1,9 +1,5 @@
 // server.es6.js
 
-// Use any horse app (such as horse-react) that implements the base horse
-// interface. Used primarily for `render`, routing, and the event emitter.
-import App from 'horse-react/src/server';
-
 // Import the Chariot library.
 import Chariot from 'chariot/src/server';
 
@@ -16,35 +12,40 @@ import routes from './routes';
 import serverRoutes from './serverRoutes';
 
 // Config is shared server/client; mix in  server-specific config here.
-const serverConfig = Object.assign({
+const serverConfig = {
   processes: process.env.PROCESSES || 1,
-  secretKeys: process.env.SECRET_KEYS.split(',') || ['tomato', 'tomahto']
-}, config);
+  secretKeys: process.env.SECRET_KEYS.split(',') || ['tomato', 'tomahto'],
+  ...config,
+};
 
 // Create a new chariot instance, passing in our App constructor
-const chariot = new Chariot(App, serverconfig);
+const chariot = new Chariot(serverConfig);
 
 // Enable koa middleware with options. See MIDDLEWARE.md for list of available
 // middlewares, or below example for how to enable your own custom middleware.
 // Middleware will run in the order in which it is defined. (Use a Map instead
 // of a plain object to ensure.) The `render` function is always defined last,
 // so if you want to run something post-render, do so after yielding.
+const sessionOptions = {};
+
 chariot.enableMiddleware(new Map({
-  csrf: [],
-  static: [`${__dirname}/../build`]
+  static: [`${__dirname}/../build`],
   compress: [],
   session: [chariot.koa, sessionOptions],
   conditional: [],
   favicon: [`${__dirname}/public/favicon.ico`],
-  etag: []
+  etag: [],
 }));
+
+// Or, define middleware one at a time.
+chariot.enableMiddleware('csrf', []);
 
 // Enable a custom middleware. Log the time before and after a request is
 // responded to.
-chariot.enableMiddleware(function * timings (ctx) {
-  console.log(`Requesting ${ctx.url} at ${new Date()}`);
+chariot.enableMiddleware(function * timings (next) {
+  console.log(`Requesting ${this.url} at ${new Date()}`);
   yield* next;
-  console.log(`Responding to ${ctx.url} at ${new Date()}`);
+  console.log(`Responding to ${this.url} at ${new Date()}`);
 });
 
 // Load in url routes
@@ -53,6 +54,6 @@ chariot.loadRoutes(routes);
 // Load in server-only routes
 chariot.loadRoutes(serverRoutes);
 
-// App.render is automatically added as middleware before the start, then the
-// koa server is started on config.port.
+// Chariot's `render` is automatically added as middleware before the start, then
+// the koa server is started on config.port.
 chariot.start();

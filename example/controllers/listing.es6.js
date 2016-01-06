@@ -1,19 +1,16 @@
-import BaseController from './base';
+import ReactController from 'chariot/reactController';
 import ListingPage from './views/pages/listing';
 
-class Listing extends BaseController {
-  get body () {
-    return ListingPage;
-  }
-
-  loadData () {
-    const { sort, commentId, context } = this.req.query;
-    const { linkId } = this.req.params;
+class Listing extends ReactController {
+  get data () {
+    const { req, api } = this.props;
+    const { sort, commentId, context } = req.query;
+    const { linkId } = req.params;
     const data = new Map();
 
     data.set('link',
       api.links.get({
-        id: linkId
+        id: linkId,
       })
     );
 
@@ -22,12 +19,14 @@ class Listing extends BaseController {
         linkId,
         sort,
         context,
-        parentCommentId: commentId
+        parentCommentId: commentId,
       })
     );
 
     return data;
   }
+
+  page = ListingPage;
 }
 
 export default Listing;

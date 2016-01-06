@@ -1,14 +1,11 @@
-import BaseController from './base';
+import ReactController from 'chariot/reactController';
 import IndexPage from './views/pages/indexPage';
 
-class Index extends BaseController {
-  get body () {
-    return IndexPage;
-  }
-
-  loadData () {
-    const { first, last, sort } = this.req.query;
-    const { subreddit } = this.req.params;
+class Index extends ReactController {
+  get data () {
+    const { req, api } = this.props;
+    const { first, last, sort } = req.query;
+    const { subreddit } = req.params;
     const data = new Map();
 
     data.set('links',
@@ -16,12 +13,14 @@ class Index extends BaseController {
         sort,
         first,
         last,
-        subreddit
+        subreddit,
       })
     );
 
     return data;
   }
+
+  page = IndexPage;
 }
 
 export default Index;
