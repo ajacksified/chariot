@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom/server';
+
 class App {
   constructor (horseKlass, config) {
     // should return a class that extends horseKlass instead? may make event
@@ -21,7 +23,11 @@ class App {
       };
 
       const controller = new klass(props);
-      return yield controller.get(next);
+      yield controller.get(next);
+
+      // if this.body is a react element
+      this.body = ReactDOM.renderToString(this.body);
+      //else, do nothing, just send back contents of this.body
     };
   }
 

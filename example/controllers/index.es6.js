@@ -6,18 +6,12 @@ class Index extends ReactController {
     const { req, api } = this.props;
     const { first, last, sort } = req.query;
     const { subreddit } = req.params;
-    const data = new Map();
 
-    data.set('links',
-      api.links.get({
-        sort,
-        first,
-        last,
-        subreddit,
-      })
-    );
+    const linkGetParams = { sort, first, last, subreddit };
 
-    return data;
+    return {
+      links: api.links.get(linkGetParams),
+    };
   }
 
   page = IndexPage;

@@ -3,7 +3,7 @@ import Controller from './controller';
 
 // A reactController is also a React component.
 // Define a `render` function at minimum. In this case, we want to
-class ReactController extends React.Component {
+class ReactController extends Controller {
   // Use `render` to return the contents of `this.page`. In this example, we're
   // going to use horse-react to render React, so we'll just return a React
   // element. `render` async.

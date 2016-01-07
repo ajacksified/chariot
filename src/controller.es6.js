@@ -11,10 +11,10 @@ class Controller {
   }
 
   modifyContext (ctx) {
-    let req = ctx.req;
-    let res = ctx.res;
+    const req = ctx.req;
+    const res = ctx.res;
 
-    let props = {
+    const props = {
       timings: {},
       ...ctx.props,
     };
@@ -31,24 +31,24 @@ class Controller {
     this.props.timings.start = Date.now();
     yield this.preRender();
     this.props.timings.preRender = Date.now() - this.props.timings.start;
-    yield this.render();
+    this.body = yield this.render();
     this.props.timings.render = Date.now() - this.props.timings.preRender;
-    yield this.postRender();
-    this.props.timings.postRender = Date.now() - this.props.timings.render;
 
     yield next;
   }
 
   * loadDataPreRender (synchronous, promises) {
-    let dataCache = {};
+    const promiseMap = new Map(promises);
+
+    const dataCache = {};
     let data = {};
 
-    if (!synchronous || !promises) {
+    if (!synchronous || !promiseMap.entries()) {
       return { data, dataCache };
     }
 
-    const entries = promises.entries();
-    const values = promises.values();
+    const entries = promiseMap.entries();
+    const values = promiseMap.values();
 
     if (!entries) {
       return { data, dataCache };
@@ -67,7 +67,7 @@ class Controller {
   }
 
   * preRender () {
-    const promises = this.data;
+    const promises = this.data();
 
     const {
       data,
@@ -79,11 +79,6 @@ class Controller {
   }
 
   render () {
-    this.req.body = this.body;
-  }
-
-  * postRender () {
-    return;
   }
 
   get data () {

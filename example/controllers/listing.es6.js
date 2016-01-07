@@ -6,24 +6,13 @@ class Listing extends ReactController {
     const { req, api } = this.props;
     const { sort, commentId, context } = req.query;
     const { linkId } = req.params;
-    const data = new Map();
 
-    data.set('link',
-      api.links.get({
-        id: linkId,
-      })
-    );
+    const commentParams = { linkId, sort, context, parentCommentId: commentId };
 
-    data.set('comments',
-      api.links.get({
-        linkId,
-        sort,
-        context,
-        parentCommentId: commentId,
-      })
-    );
-
-    return data;
+    return {
+      link: api.links.get({ id: linkId }),
+      comments: api.comments.get(commentParams),
+    };
   }
 
   page = ListingPage;

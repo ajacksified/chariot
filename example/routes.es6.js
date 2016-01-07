@@ -8,6 +8,11 @@ function routes (app) {
   router.get('/r/:subreddit', app.get(Index));
 
   router.get('/r/:subreddit/comments/:listingId/:listingTitle/:listingId', app.get(Listing));
+
+  router.get('/json', function * (next) {
+    this.body = { name: 'jack' };
+    return yield next;
+  });
 }
 
 export default routes;
