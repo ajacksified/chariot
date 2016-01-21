@@ -76,6 +76,10 @@ class Controller {
 
     this.props.data = data;
     this.props.dataCache = dataCache;
+
+    if (this.dataValidators(this.props.dataCache, this) === false) {
+      return;
+    }
   }
 
   render () {
