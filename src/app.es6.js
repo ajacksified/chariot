@@ -14,16 +14,14 @@ class App {
   get (klass) {
     const config = this.config;
 
-    return function * buildController (next) {
-      const ctx = this;
-
+    return async function buildController (ctx, next) {
       const props = {
         ctx,
         config,
       };
 
       const controller = new klass(props);
-      yield controller.get(next);
+      await controller.get(next);
 
       // if this.body is a react element
       this.body = ReactDOM.renderToString(this.body);

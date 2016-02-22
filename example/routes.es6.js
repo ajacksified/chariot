@@ -9,9 +9,10 @@ function routes (app) {
 
   router.get('/r/:subreddit/comments/:listingId/:listingTitle/:listingId', app.get(Listing));
 
-  router.get('/json', function * (next) {
-    this.body = { name: 'jack' };
-    return yield next;
+  router.get('/json', function (ctx) {
+    ctx.body = {
+      name: 'jack',
+    };
   });
 }
 

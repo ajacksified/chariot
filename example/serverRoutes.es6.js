@@ -1,16 +1,14 @@
-import Controller from './controllers/index';
-
 const HEALTH = 'OK';
 const ROBOTS = 'disallow *';
 
 function routes (app) {
   const router = { app };
 
-  router.get('robots.txt', function * () {
+  router.get('robots.txt', async () => {
     return ROBOTS;
   });
 
-  router.get('/health', function * () {
+  router.get('/health', async () => {
     return HEALTH;
   });
 }

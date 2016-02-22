@@ -27,17 +27,17 @@ class Controller {
     return { req, res, props };
   }
 
-  * get (next) {
+  async get (next) {
     this.props.timings.start = Date.now();
-    yield this.preRender();
+    await this.preRender();
     this.props.timings.preRender = Date.now() - this.props.timings.start;
-    this.body = yield this.render();
+    this.body = await this.render();
     this.props.timings.render = Date.now() - this.props.timings.preRender;
 
-    yield next;
+    await next();
   }
 
-  * loadDataPreRender (synchronous, promises) {
+  async loadDataPreRender (synchronous, promises) {
     const promiseMap = new Map(promises);
 
     const dataCache = {};
@@ -54,7 +54,7 @@ class Controller {
       return { data, dataCache };
     }
 
-    data = yield Promise.all([...values]);
+    data = await Promise.all([...values]);
 
     let i = 0;
     let key;
@@ -66,13 +66,13 @@ class Controller {
     return { data, dataCache };
   }
 
-  * preRender () {
+  async preRender () {
     const promises = this.data();
 
     const {
       data,
       dataCache,
-    } = yield this.loadDataPreRender(this.req.synchronous, promises);
+    } = await this.loadDataPreRender(this.req.synchronous, promises);
 
     this.props.data = data;
     this.props.dataCache = dataCache;

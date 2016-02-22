@@ -42,9 +42,9 @@ chariot.enableMiddleware('csrf', []);
 
 // Enable a custom middleware. Log the time before and after a request is
 // responded to.
-chariot.enableMiddleware(function * timings (next) {
+chariot.enableMiddleware(async (ctx, next) => {
   console.log(`Requesting ${this.url} at ${new Date()}`);
-  yield* next;
+  await next();
   console.log(`Responding to ${this.url} at ${new Date()}`);
 });
 
