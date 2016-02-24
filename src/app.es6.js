@@ -1,6 +1,3 @@
-import ReactDOM from 'react-dom/server';
-import React from 'react';
-
 export default class App {
   constructor (horseKlass, config) {
     // should return a class that extends horseKlass instead? may make event
@@ -23,12 +20,6 @@ export default class App {
 
       const controller = new klass(props);
       await controller.get(next);
-
-      // Render react if it's a react element. Otherwise, we assume it's json or
-      // text or whatever and we'll render it as is.
-      if (React.isValidElement(this.body)) {
-        ctx.body = ReactDOM.renderToString(this.body);
-      }
     };
   }
 
