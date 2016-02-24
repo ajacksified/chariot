@@ -40,7 +40,9 @@ class Index extends BaseController {
 
   constructor (props) {
     super(props);
-    this.props.title = 'Home';
+    const sub = this.context.params.subredditName;
+
+    this.props.title = sub ? `r/${sub}` : 'reddit';
   }
 
   get data () {
