@@ -2,9 +2,16 @@ import React from 'react';
 import Controller from './controller';
 import isEqual from 'lodash/function/isEqual';
 
+import WrappedPromise from './wrappedPromise';
+import WrappedPage from './wrappedPage';
+
 // A reactController is also a React component.
 // Define a `render` function at minimum. In this case, we want to
-class ReactController extends Controller {
+export default class ReactController extends Controller {
+  static wrap (promise) {
+    return new WrappedPromise(promise);
+  }
+
   constructor (props) {
     super(props);
 
@@ -37,7 +44,7 @@ class ReactController extends Controller {
     }
 
     this.watchProperties();
-  } 
+  }
 
   watchProperties() {
     // Handle no-data error-page case
@@ -105,9 +112,11 @@ class ReactController extends Controller {
       const Layout = this.layout;
 
       return (
-        <Layout {...props} key='layout'>
-          <Page {...props} />
-        </Layout>
+        <WrappedPage app={ props.app } api={ props.api } ctx={ props.ctx }>
+          <Layout {...props} key='layout'>
+            <Page {...props} />
+          </Layout>
+        </WrappedPage>
       );
     }
 
@@ -119,5 +128,3 @@ class ReactController extends Controller {
   layout = null;
   page = null;
 }
-
-export default ReactController;

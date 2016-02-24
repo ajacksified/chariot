@@ -1,4 +1,6 @@
-class Controller {
+import React from 'react';
+
+export default class Controller extends React.Component {
   constructor (props) {
     const { ctx, config } = props;
     const modifiedCtx = this.modifyContext(ctx);
@@ -94,5 +96,3 @@ class Controller {
     CLIENT: 'CLIENT',
   }
 }
-
-export default Controller;

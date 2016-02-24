@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/server';
 
-class App {
+export default class App {
   constructor (horseKlass, config) {
     // should return a class that extends horseKlass instead? may make event
     // binding easier
@@ -30,5 +30,3 @@ class App {
   }
 
 }
-
-export default App;

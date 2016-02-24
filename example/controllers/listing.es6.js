@@ -1,7 +1,9 @@
-import ReactController from 'chariot/reactController';
-import ListingPage from './views/pages/listing';
+import ListingPage from '../views/pages/listing';
+import BaseController from './base';
 
-class Listing extends ReactController {
+class Listing extends BaseController {
+  page = ListingPage;
+
   get data () {
     const { req, api } = this.props;
     const { sort, commentId, context } = req.query;
@@ -14,8 +16,6 @@ class Listing extends ReactController {
       comments: api.comments.get(commentParams),
     };
   }
-
-  page = ListingPage;
 }
 
 export default Listing;

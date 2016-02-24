@@ -1,7 +1,7 @@
 const HEALTH = 'OK';
 const ROBOTS = 'disallow *';
 
-function routes (app) {
+export default function routes (app) {
   const router = { app };
 
   router.get('robots.txt', async () => {
@@ -12,5 +12,3 @@ function routes (app) {
     return HEALTH;
   });
 }
-
-export default routes;
