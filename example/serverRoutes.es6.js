@@ -1,14 +1,27 @@
+import fs from 'fs';
+
 const HEALTH = 'OK';
-const ROBOTS = 'disallow *';
 
 export default function routes (app) {
   const router = { app };
+  let robots;
 
-  router.get('robots.txt', async () => {
-    return ROBOTS;
+  fs.readFile('robots.txt', function(err, file) {
+    if (file && !err) {
+      robots = file.toString();
+    }
   });
 
-  router.get('/health', async () => {
-    return HEALTH;
+  router.get('robots.txt', async (ctx) => {
+    if (!robots) {
+      ctx.status = 503;
+      return;
+    }
+
+    ctx.body = robots;
+  });
+
+  router.get('/health', async (ctx) => {
+    ctx.body = HEALTH;
   });
 }

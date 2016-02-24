@@ -9,7 +9,7 @@ export default function routes (app) {
 
   router.get('/r/:subredditName/comments/:listingId/:listingTitle/:listingId', app.get(Listing));
 
-  router.get('/json', function (ctx) {
+  router.get('/json', async function (ctx) {
     ctx.body = {
       name: 'jack',
     };
