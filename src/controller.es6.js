@@ -58,21 +58,31 @@ export default class Controller extends React.Component {
       return { data, dataCache };
     }
 
-    const entries = promiseMap.entries();
-    const values = promiseMap.values();
-
-    if (!entries) {
+    if (!promiseMap.entries()) {
       return { data, dataCache };
     }
 
-    data = await Promise.all([...values]);
+    // loop through promises, see if any have the value set from a preCall. if
+    // they do, set it immediately rather than calling out to the promise.
 
-    let i = 0;
-    let key;
-    for ([key] of entries) {
-      dataCache[key] = data[i];
-      i++;
-    }
+    const promiseKeys = [];
+    const promiseValues = [];
+
+    promiseMap.forEach((val, key) => {
+      if (val.res) {
+        dataCache[key] = val.res;
+      } else {
+        promiseKeys.push(key);
+        promiseValues.push(val);
+      }
+    });
+
+    // Fulfill the non-fulfilled promises
+    data = await Promise.all([...promiseValues]);
+
+    promiseValues.forEach((v, i) => {
+      dataCache[promiseKeys[i]] = data[i];
+    });
 
     return { data, dataCache };
   }

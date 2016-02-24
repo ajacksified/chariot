@@ -22,7 +22,7 @@ export default class WrappedPromise {
 
     // if `res` is not undefined, `dataCache` will be set to preCall in the
     // controller.
-    return res;
+    this.res = res;
   }
 
   resolve (res) {
