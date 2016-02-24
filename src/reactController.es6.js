@@ -79,11 +79,6 @@ export default class ReactController extends Controller {
         meta,
       });
 
-      if (this.dataValidators(data, this.props.ctx) === false) {
-        this.setState({ canceled: true });
-        return;
-      }
-
       if (isEqual([...this.props.data.keys()].sort(), Object.keys(this.state.data).sort())) {
         this.finish();
       }

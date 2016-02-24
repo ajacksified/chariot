@@ -43,13 +43,6 @@ class Index extends BaseController {
     this.props.title = 'Home';
   }
 
-  dataValidators (data, ctx) {
-    if (data.links && data.links.length === 0 && (ctx.query.after || ctx.query.before)) {
-      ctx.redirect(`${ctx.path}?error=refresh`);
-      return false;
-    }
-  }
-
   get data () {
     const { query, params, api } = this.context;
     const { first, last, sort } = query;
@@ -75,13 +68,15 @@ class Index extends BaseController {
   }
 
   isStale (data, ctx) {
-    const { req } = this.props;
-    const { query, path } = req;
+    const { query, path } = this.context;
     const { body } = data;
 
     if (Index.isStalePage(query, body)) {
       ctx.redirect(Index.stalePageRedirectUrl(path, query));
+      return true;
     }
+
+    return false;
   }
 }
 
