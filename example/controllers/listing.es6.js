@@ -16,6 +16,14 @@ class Listing extends BaseController {
       comments: api.comments.get(commentParams),
     };
   }
+
+  async preRender() {
+    await super();
+
+    if (this.props.dataCache.link) {
+      this.props.title = this.props.dataCache.link.body.title;
+    }
+  }
 }
 
 export default Listing;
