@@ -35,12 +35,12 @@ export default class WrappedPromise {
     throw new Error(err);
   }
 
-  then () {
-    return this.wrapped.then;
+  then (...args) {
+    return this.wrapped.then.call(this, args);
   }
 
-  error () {
-    return this.wrapped.error;
+  error (...args) {
+    return this.wrapped.then.call(this, args);
   }
 
   preRender (fn) {

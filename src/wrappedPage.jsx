@@ -6,6 +6,7 @@ export default class PageWrapper extends React.Component {
   static childContexTypes = {
     api: React.PropTypes.object,
     app: React.PropTypes.object,
+    cookies: React.PropTypes.object,
     path: React.PropTypes.string,
     query: React.PropTypes.object,
     params: React.PropTypes.string,
@@ -17,19 +18,20 @@ export default class PageWrapper extends React.Component {
   }
 
   getChildContext() {
-    const { api, app, ctx } = this.props;
+    const { api, app, req, cookies } = this.props;
 
     return {
       api,
       app,
-      path: ctx.path,
-      query: ctx.query,
-      params: ctx.params,
-      url: ctx.path,
-      userAgent: ctx.userAgent,
-      csrf: ctx.csrf,
-      referrer: ctx.headers.referer,
-      env: ctx.env,
+      cookies,
+      path: req.path,
+      query: req.query,
+      params: req.params,
+      url: req.path,
+      userAgent: req.userAgent,
+      csrf: req.csrf,
+      referrer: req.headers.referer,
+      env: req.env,
     };
   }
 

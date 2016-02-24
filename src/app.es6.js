@@ -12,12 +12,12 @@ export default class App {
   }
 
   get (klass) {
-    const config = this.config;
-
     return async function buildController (ctx, next) {
+      const app = this;
+
       const props = {
         ctx,
-        config,
+        app,
       };
 
       const controller = new klass(props);

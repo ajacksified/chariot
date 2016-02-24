@@ -38,6 +38,11 @@ class Index extends BaseController {
     return `${path}${qs}`;
   }
 
+  constructor (props) {
+    super(props);
+    this.props.title = 'Home';
+  }
+
   dataValidators (data, ctx) {
     if (data.links && data.links.length === 0 && (ctx.query.after || ctx.query.before)) {
       ctx.redirect(`${ctx.path}?error=refresh`);

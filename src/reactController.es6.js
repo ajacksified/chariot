@@ -15,8 +15,6 @@ export default class ReactController extends Controller {
   constructor (props) {
     super(props);
 
-    this.props = props;
-
     this.state = {
       data: {},
       meta: {},
@@ -96,32 +94,36 @@ export default class ReactController extends Controller {
   }
 
   finish () {
-    if (this.state.finished === false && this.track) {
+    if (this.state.finished === false) {
       this.props.app.emit('pageview', { ...this.props, data: this.state.data });
       this.setState({ finished: true });
     }
   }
+
   // Use `render` to return the contents of `this.page`. In this example, we're
   // going to use horse-react to render React, so we'll just return a React
   // element. `render` async.
   render () {
     const Page = this.page;
     const props = this.props;
+    const context = this.context;
 
     if (props.includeLayout && this.layout) {
       const Layout = this.layout;
 
       return (
-        <WrappedPage app={ props.app } api={ props.api } ctx={ props.ctx }>
-          <Layout {...props} key='layout'>
-            <Page {...props} />
+        <WrappedPage { ...context }>
+          <Layout { ...props } key='layout'>
+            <Page { ...props } />
           </Layout>
         </WrappedPage>
       );
     }
 
     return (
-      <Page key={ props.key } />
+      <WrappedPage { ...context }>
+        <Page { ...props } />
+      </WrappedPage>
     );
   }
 

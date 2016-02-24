@@ -2,31 +2,40 @@ import React from 'react';
 
 export default class Controller extends React.Component {
   constructor (props) {
-    const { ctx, config } = props;
-    const modifiedCtx = this.modifyContext(ctx);
+    const { ctx, app, api } = props;
+    const modifiedCtx = this.modifyContext(ctx, props);
 
-    this.req = modifiedCtx.req;
-    this.res = modifiedCtx.res;
-    this.props = modifiedCtx.props;
-
-    this.config = config;
-  }
-
-  modifyContext (ctx) {
-    const req = ctx.req;
-    const res = ctx.res;
-
-    const props = {
-      timings: {},
-      ...ctx.props,
+    this.context = {
+      api,
+      app,
+      req: modifiedCtx.req,
+      cookies: ctx.cookies,
     };
 
-    if (this.req.env === Controller.env.SERVER) {
+    this.props = modifiedCtx.props;
+
+    super(this.props);
+  }
+
+  modifyContext (ctx, props) {
+    const req = ctx.req;
+
+    // Delete ctx/app/api from props; these will go into context
+    delete props.ctx;
+    delete props.app;
+    delete props.api;
+
+    const modifiedProps = {
+      timings: {},
+      ...props,
+    };
+
+    if (req.env === Controller.env.SERVER) {
       req.synchronous = true;
-      props.includeLayout = true;
+      modifiedProps.includeLayout = true;
     }
 
-    return { req, res, props };
+    return { req, props: modifiedProps };
   }
 
   async get (next) {
@@ -36,7 +45,7 @@ export default class Controller extends React.Component {
     this.body = await this.render();
     this.props.timings.render = Date.now() - this.props.timings.preRender;
 
-    await next();
+    return await next();
   }
 
   async loadDataPreRender (synchronous, promises) {
@@ -74,7 +83,7 @@ export default class Controller extends React.Component {
     const {
       data,
       dataCache,
-    } = await this.loadDataPreRender(this.req.synchronous, promises);
+    } = await this.loadDataPreRender(this.context.req.synchronous, promises);
 
     this.props.data = data;
     this.props.dataCache = dataCache;
