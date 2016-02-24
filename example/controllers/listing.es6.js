@@ -5,9 +5,9 @@ class Listing extends BaseController {
   page = ListingPage;
 
   get data () {
-    const { req, api } = this.props;
-    const { sort, commentId, context } = req.query;
-    const { linkId } = req.params;
+    const { query, params, api } = this.context;
+    const { sort, commentId, context } = query;
+    const { linkId } = params;
 
     const commentParams = { linkId, sort, context, parentCommentId: commentId };
 
