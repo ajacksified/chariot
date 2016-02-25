@@ -29,12 +29,13 @@ const chariot = new Chariot(serverConfig);
 const sessionOptions = {};
 
 chariot.enableMiddleware(new Map({
-  static: [`${__dirname}/../build`],
+  staticFiles: [`${__dirname}/../build`],
+  requestGUID: [],
+  favicon: [`${__dirname}/public/favicon.ico`],
   compress: [],
   session: [chariot.koa, sessionOptions],
-  conditional: [],
-  favicon: [`${__dirname}/public/favicon.ico`],
   etag: [],
+  conditionalGet: [],
 }));
 
 // Or, define middleware one at a time.
