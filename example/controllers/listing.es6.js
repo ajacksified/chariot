@@ -18,7 +18,7 @@ class Listing extends BaseController {
   }
 
   async preRender() {
-    await super();
+    await super.preRender();
 
     if (this.props.dataCache.link) {
       this.props.title = this.props.dataCache.link.body.title;

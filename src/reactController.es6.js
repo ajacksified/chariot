@@ -1,6 +1,6 @@
 import React from 'react';
 import Controller from './controller';
-import isEqual from 'lodash/function/isEqual';
+import { isEqual } from 'lodash/lang';
 
 import WrappedPromise from './wrappedPromise';
 import WrappedPage from './wrappedPage';

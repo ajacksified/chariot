@@ -41,14 +41,7 @@ export default class Server {
   }
 
   enableMiddleware(middleware, config) {
-    if (typeof middleware === 'object' && middleware.entries) {
-      let name;
-      let args;
-
-      for ([name, args] of middleware.entries()) {
-        this.enableSingleMiddleware(this.getMiddleware(name)(...args));
-      }
-    } else if (typeof middleware === 'function') {
+    if (typeof middleware === 'function') {
       this.enableSingleMiddleware(middleware);
     } else if (typeof middleware === 'string') {
       this.enableSingleMiddleware(this.getMiddleware(middleware)(...config));

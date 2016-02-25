@@ -1,9 +1,9 @@
 import querystring from 'querystring';
 
-import BaseController from 'chariot/reactController';
-import { wrap } from 'chariot/reactController';
+import BaseController from 'chariot/src/reactController';
+import { wrap } from 'chariot/src/reactController';
 
-import IndexPage from './views/pages/indexPage';
+import IndexPage from '../views/pages/indexPage';
 
 class Index extends BaseController {
   page = IndexPage;

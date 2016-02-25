@@ -1,23 +1,7 @@
 import React from 'react';
 
 export default class Controller extends React.Component {
-  constructor (props) {
-    const { ctx, app, api } = props;
-    const modifiedCtx = this.modifyContext(ctx, props);
-
-    this.context = {
-      api,
-      app,
-      req: modifiedCtx.req,
-      cookies: ctx.cookies,
-    };
-
-    this.props = modifiedCtx.props;
-
-    super(this.props);
-  }
-
-  modifyContext (ctx, props) {
+  static modifyContext (ctx, props) {
     const req = ctx.req;
 
     // Delete ctx/app/api from props; these will go into context
@@ -36,6 +20,22 @@ export default class Controller extends React.Component {
     }
 
     return { req, props: modifiedProps };
+  }
+
+  constructor (props) {
+    const { ctx, app, api } = props;
+    const modifiedCtx = Controller.modifyContext(ctx, props);
+
+    super(modifiedCtx.props);
+
+    this.context = {
+      api,
+      app,
+      req: modifiedCtx.req,
+      cookies: ctx.cookies,
+    };
+
+    this.props = modifiedCtx.props;
   }
 
   async get (next) {

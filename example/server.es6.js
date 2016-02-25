@@ -11,10 +11,12 @@ import config from './config';
 import routes from './routes';
 import serverRoutes from './serverRoutes';
 
+const keys = process.env.SECRET_KEYS || 'tomato,tomahto';
+
 // Config is shared server/client; mix in  server-specific config here.
 const serverConfig = {
   processes: process.env.PROCESSES || 1,
-  secretKeys: process.env.SECRET_KEYS.split(',') || ['tomato', 'tomahto'],
+  keys: keys.split(','),
   ...config,
 };
 
@@ -26,6 +28,7 @@ const chariot = new Chariot(serverConfig);
 // Middleware will run in the order in which it is defined. (Use a Map instead
 // of a plain object to ensure.) The `render` function is always defined last,
 // so if you want to run something post-render, do so after yielding.
+/*
 const sessionOptions = {};
 
 chariot.enableMiddleware(new Map({
@@ -40,6 +43,7 @@ chariot.enableMiddleware(new Map({
 
 // Or, define middleware one at a time.
 chariot.enableMiddleware('csrf', []);
+*/
 
 // Enable a custom middleware. Log the time before and after a request is
 // responded to.
