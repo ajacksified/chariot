@@ -109,8 +109,8 @@ export default class ReactController extends Controller {
 
       return (
         <WrappedPage { ...context }>
-          <Layout { ...props } { ...state } key='layout'>
-            <Page { ...props } { ...state } />
+          <Layout { ...props } { ...state } context={ context } key='layout'>
+            <Page { ...props } { ...state } context={ context } />
           </Layout>
         </WrappedPage>
       );
@@ -118,7 +118,7 @@ export default class ReactController extends Controller {
 
     return (
       <WrappedPage { ...context }>
-        <Page { ...props } { ...state } />
+        <Page { ...props } { ...state } context={ context } />
       </WrappedPage>
     );
   }

@@ -23,6 +23,10 @@ export default function DefaultLayout (props) {
       </head>
       <body>
         <div id='app-container'>
+          <div>
+            <a href='/'>reddit.com</a>
+          </div>
+
           { props.children }
         </div>
 

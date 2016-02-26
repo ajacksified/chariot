@@ -47,11 +47,11 @@ class Index extends BaseController {
 
   get data () {
     const { query, params, api } = this.context;
-    const { first, last, sort } = query;
+    const { before, after, sort } = query;
     const { subredditName } = params;
 
     const linkGetParams = {
-      query: { sort, first, last, subredditName },
+      query: { sort, before, after, subredditName },
       origin: 'https://www.reddit.com',
     };
 
