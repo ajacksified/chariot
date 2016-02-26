@@ -8,6 +8,8 @@ const App = Chariot(Cart(Horse));
 export default class Client {
   constructor (config) {
     this.config = config;
+    this.middleware = config.middleware || [];
+
     const modifyContext = this.modifyContext;
 
     this.app = new App({

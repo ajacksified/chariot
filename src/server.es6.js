@@ -51,7 +51,10 @@ const GeneratorFunction = Object.getPrototypeOf(eval("(function*(){})")).constru
 export default class Server {
   constructor (config) {
     this.config = config;
-    this.middleware = [setServerContextProps(this)];
+
+    this.middleware = config.middleware || [];
+    this.middleware.push(setServerContextProps(this));
+
     this.app = new App(config);
 
     this.warn(config);

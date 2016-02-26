@@ -2,7 +2,7 @@
 
 // Import the Chariot library.
 import Chariot from 'chariot/src/server';
-import { MIDDLEWARE_MAP } from 'chariot/src/server';
+import { MIDDLEWARE_MAP as MIDDLEWARE } from 'chariot/src/server';
 
 // Import config from a file. It should return an object popluated with values
 // from environment variables.
@@ -29,27 +29,29 @@ const serverConfig = {
   ...config,
 };
 
+// Enable koa middleware with options. See MIDDLEWARE.md for list of available
+// middlewares, or below example for how to enable your own custom middleware.
+// Middleware will run in the order in which it is defined.
+//  The `render` function is always defined last (and `route` just before),
+// so if you want to run something post-render, do so after awaiting.
+
+serverConfig.middleware = [
+  MIDDLEWARE.staticFiles(`${__dirname}/build`),
+  MIDDLEWARE.staticFiles(`${__dirname}/public`),
+  MIDDLEWARE.requestGUID(),
+  MIDDLEWARE.favicon(`${__dirname}/public/favicon.ico`),
+  MIDDLEWARE.compress(),
+  MIDDLEWARE.etag(),
+  MIDDLEWARE.conditionalGet(),
+  MIDDLEWARE.csrf(),
+];
+
 // Create a new chariot instance, passing in our App constructor
 const chariot = new Chariot(serverConfig);
 
-// Enable koa middleware with options. See MIDDLEWARE.md for list of available
-// middlewares, or below example for how to enable your own custom middleware.
-// Middleware will run in the order in which it is defined. (Use a Map instead
-// of a plain object to ensure.) The `render` function is always defined last,
-// so if you want to run something post-render, do so after yielding.
+chariot.enableMiddleware(MIDDLEWARE.session(sessionOptions, chariot.server));
 
 const sessionOptions = {};
-
-// Or, define middleware one at a time.
-chariot.enableMiddleware(MIDDLEWARE_MAP.staticFiles(`${__dirname}/build`));
-chariot.enableMiddleware(MIDDLEWARE_MAP.staticFiles(`${__dirname}/public`));
-chariot.enableMiddleware(MIDDLEWARE_MAP.requestGUID());
-chariot.enableMiddleware(MIDDLEWARE_MAP.favicon(`${__dirname}/public/favicon.ico`));
-chariot.enableMiddleware(MIDDLEWARE_MAP.compress());
-chariot.enableMiddleware(MIDDLEWARE_MAP.session(sessionOptions, chariot.server));
-chariot.enableMiddleware(MIDDLEWARE_MAP.etag());
-chariot.enableMiddleware(MIDDLEWARE_MAP.conditionalGet());
-chariot.enableMiddleware(MIDDLEWARE_MAP.csrf());
 
 // Enable a custom middleware. Log the time before and after a request is
 // responded to.
