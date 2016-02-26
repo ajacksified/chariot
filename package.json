@@ -12,6 +12,7 @@
   "author": "Jack Lawson <ajacksified@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "horse-cart": "0.0.5",
     "horse-react": "git://github.com/ajacksified/horse-react.git#52256733d1d5ed381cb019a44054b8df9d62a047",
     "koa": "^2.0.0-alpha.3",
     "koa-compress": "^1.0.9",
