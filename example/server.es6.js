@@ -42,6 +42,7 @@ const sessionOptions = {};
 
 // Or, define middleware one at a time.
 chariot.enableMiddleware(MIDDLEWARE_MAP.staticFiles(`${__dirname}/build`));
+chariot.enableMiddleware(MIDDLEWARE_MAP.staticFiles(`${__dirname}/public`));
 chariot.enableMiddleware(MIDDLEWARE_MAP.requestGUID());
 chariot.enableMiddleware(MIDDLEWARE_MAP.favicon(`${__dirname}/public/favicon.ico`));
 chariot.enableMiddleware(MIDDLEWARE_MAP.compress());
