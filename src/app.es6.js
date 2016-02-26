@@ -1,26 +1,15 @@
-export default class App {
-  constructor (horseKlass, config) {
-    // should return a class that extends horseKlass instead? may make event
-    // binding easier
-    this._horse = new horseKlass(config);
+export default function (horse) {
+  return class App extends horse {
+    get (klass) {
+      return async function buildController (ctx, next) {
+        // TODO why do these have to be lets? what's going on. Something is
+        // hanging on to a reference somewhere.
+        ctx.props = ctx.props || {};
+        ctx.props.app = this;
 
-    for (const k in this._horse) {
-      this[k] = this._horse[k];
+        let controller = new klass(ctx, this);
+        await controller.get(ctx, next);
+      }.bind(this);
     }
-  }
-
-  get (klass) {
-    return async function buildController (ctx, next) {
-      const app = this;
-
-      const props = {
-        ctx,
-        app,
-      };
-
-      const controller = new klass(props);
-      await controller.get(next);
-    };
-  }
-
+  };
 }

@@ -1,65 +1,56 @@
 import React from 'react';
 
 export default class Controller extends React.Component {
-  static modifyContext (ctx, props) {
-    const req = ctx.req;
-
-    // Delete ctx/app/api from props; these will go into context
-    delete props.ctx;
-    delete props.app;
-    delete props.api;
-
-    const modifiedProps = {
+  static modifyContext (ctx) {
+    const props = {
+      ...ctx.props,
       timings: {},
-      ...props,
     };
 
-    if (req.env === Controller.env.SERVER) {
-      req.synchronous = true;
-      modifiedProps.includeLayout = true;
+    if (ctx.req.env === Controller.env.SERVER) {
+      props.includeLayout = true;
     }
 
-    return { req, props: modifiedProps };
+    return { context: ctx, props };
   }
 
-  constructor (props) {
-    const { ctx, app, api } = props;
-    const modifiedCtx = Controller.modifyContext(ctx, props);
+  constructor (ctx, app) {
+    const modifiedCtx = Controller.modifyContext(ctx);
 
     super(modifiedCtx.props);
 
-    this.context = {
-      api,
-      app,
-      req: modifiedCtx.req,
-      cookies: ctx.cookies,
-    };
-
     this.props = modifiedCtx.props;
+    this.props.app = app;
+
+    this.context = modifiedCtx.context;
   }
 
-  async get (next) {
-    this.props.timings.start = Date.now();
+  async get (ctx, next) {
+    ctx.props.timings = {};
+    ctx.props.timings.start = Date.now();
     await this.preRender();
-    this.props.timings.preRender = Date.now() - this.props.timings.start;
-    this.body = await this.render();
-    this.props.timings.render = Date.now() - this.props.timings.preRender;
+    ctx.props.timings.preRender = Date.now() - this.props.timings.start;
+    ctx.body = await this.render();
+    ctx.props.timings.render = Date.now() - this.props.timings.preRender;
 
     return await next();
   }
 
-  async loadDataPreRender (synchronous, promises) {
-    const promiseMap = new Map(promises);
+  async loadDataPreRender (synchronous, promises={}) {
+    const promiseMap = new Map();
+
+    Object.keys(promises).forEach(k => {
+      promiseMap.set(k, promises[k]);
+    });
 
     const dataCache = {};
-    let data = {};
 
     if (!synchronous || !promiseMap.entries()) {
-      return { data, dataCache };
+      return { data: promises, dataCache };
     }
 
     if (!promiseMap.entries()) {
-      return { data, dataCache };
+      return { data: promises, dataCache };
     }
 
     // loop through promises, see if any have the value set from a preCall. if
@@ -78,25 +69,26 @@ export default class Controller extends React.Component {
     });
 
     // Fulfill the non-fulfilled promises
-    data = await Promise.all([...promiseValues]);
+    const promiseResults = await Promise.all([...promiseValues]);
 
     promiseValues.forEach((v, i) => {
-      dataCache[promiseKeys[i]] = data[i];
+      dataCache[promiseKeys[i]] = promiseResults[i];
     });
 
-    return { data, dataCache };
+    return { data: promises, dataCache };
   }
 
   async preRender () {
-    const promises = this.data();
+    const promises = this.data;
 
     const {
       data,
       dataCache,
-    } = await this.loadDataPreRender(this.context.req.synchronous, promises);
+    } = await this.loadDataPreRender(this.context.synchronous, promises);
 
     this.props.data = data;
     this.props.dataCache = dataCache;
+    this.state.data = this.props.dataCache;
   }
 
   render () {

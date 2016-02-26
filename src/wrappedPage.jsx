@@ -3,7 +3,7 @@
 import React from 'react';
 
 export default class PageWrapper extends React.Component {
-  static childContexTypes = {
+  static childContextTypes = {
     api: React.PropTypes.object,
     app: React.PropTypes.object,
     cookies: React.PropTypes.object,
@@ -15,7 +15,7 @@ export default class PageWrapper extends React.Component {
     csrf: React.PropTypes.string,
     referrer: React.PropTypes.string,
     env: React.PropTypes.string,
-  }
+  };
 
   getChildContext() {
     const { api, app, req, cookies } = this.props;

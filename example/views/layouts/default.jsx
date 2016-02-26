@@ -12,8 +12,8 @@ export default function DefaultLayout (props) {
     js = manifest['client.min.js'];
   }
 
-  css = `${config.assetPath}/${css}`;
-  js = `${config.assetPath}/${js}`;
+  css = `${config.assetPath}/css/${css}`;
+  js = `${config.assetPath}/js/${js}`;
 
   return (
     <html>

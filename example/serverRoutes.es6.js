@@ -3,7 +3,7 @@ import fs from 'fs';
 const HEALTH = 'OK';
 
 export default function routes (app) {
-  const router = { app };
+  const { router } = app;
   let robots;
 
   fs.readFile('robots.txt', function(err, file) {

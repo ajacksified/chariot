@@ -101,15 +101,16 @@ export default class ReactController extends Controller {
   render () {
     const Page = this.page;
     const props = this.props;
+    const state = this.state;
     const context = this.context;
 
-    if (props.includeLayout && this.layout) {
+    if (context.includeLayout && this.layout) {
       const Layout = this.layout;
 
       return (
         <WrappedPage { ...context }>
-          <Layout { ...props } key='layout'>
-            <Page { ...props } />
+          <Layout { ...props } { ...state } key='layout'>
+            <Page { ...props } { ...state } />
           </Layout>
         </WrappedPage>
       );
@@ -117,7 +118,7 @@ export default class ReactController extends Controller {
 
     return (
       <WrappedPage { ...context }>
-        <Page { ...props } />
+        <Page { ...props } { ...state } />
       </WrappedPage>
     );
   }
