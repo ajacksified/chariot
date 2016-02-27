@@ -67,6 +67,8 @@ chariot.enableMiddleware(async (ctx, next) => {
     debugLevel: 'info',
   });
 
+  ctx.config = config;
+
   await next();
 });
 

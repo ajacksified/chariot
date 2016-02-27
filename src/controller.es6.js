@@ -1,37 +1,39 @@
-import React from 'react';
-
-export default class Controller extends React.Component {
-  static modifyContext (ctx) {
+export default class Controller {
+  static modifyContext (ctx, app) {
     const props = {
       ...ctx.props,
+      app,
+      context: {
+        path: ctx.path,
+        query: ctx.query,
+        params: ctx.object,
+        url: ctx.path,
+        userAgent: ctx.userAgent,
+        csrf: ctx.csrf,
+        referrer: ctx.headers.referer,
+        env: ctx.env,
+      },
       timings: {},
+      config: ctx.config,
     };
 
-    if (ctx.req.env === Controller.env.SERVER) {
-      props.includeLayout = true;
-    }
-
-    return { context: ctx, props };
+    return props;
   }
 
   constructor (ctx, app) {
-    const modifiedCtx = Controller.modifyContext(ctx);
-
-    super(modifiedCtx.props);
-
-    this.props = modifiedCtx.props;
-    this.props.app = app;
-
-    this.context = modifiedCtx.context;
+    const modifiedCtx = Controller.modifyContext(ctx, app);
+    ctx.props = modifiedCtx;
+    ctx.state = {};
+    this.ctx = ctx;
   }
 
   async get (ctx, next) {
     ctx.props.timings = {};
     ctx.props.timings.start = Date.now();
     await this.preRender();
-    ctx.props.timings.preRender = Date.now() - this.props.timings.start;
-    ctx.body = await this.render();
-    ctx.props.timings.render = Date.now() - this.props.timings.preRender;
+    ctx.props.timings.preRender = Date.now() - ctx.props.timings.start;
+    ctx.body = this.render();
+    ctx.props.timings.render = Date.now() - ctx.props.timings.preRender;
 
     return await next();
   }
@@ -45,12 +47,8 @@ export default class Controller extends React.Component {
 
     const dataCache = {};
 
-    if (!synchronous || !promiseMap.entries()) {
-      return { data: promises, dataCache };
-    }
-
-    if (!promiseMap.entries()) {
-      return { data: promises, dataCache };
+    if (!synchronous || !promiseMap.size) {
+      return { data: promiseMap, dataCache };
     }
 
     // loop through promises, see if any have the value set from a preCall. if
@@ -75,20 +73,20 @@ export default class Controller extends React.Component {
       dataCache[promiseKeys[i]] = promiseResults[i];
     });
 
-    return { data: promises, dataCache };
+    return { data: promiseMap, dataCache };
   }
 
   async preRender () {
     const promises = this.data;
 
     const {
-      data,
       dataCache,
-    } = await this.loadDataPreRender(this.context.synchronous, promises);
+      data,
+    } = await this.loadDataPreRender(this.ctx.synchronous, promises);
 
-    this.props.data = data;
-    this.props.dataCache = dataCache;
-    this.state.data = this.props.dataCache;
+    this.ctx.props.data = data;
+    this.ctx.props.dataCache = dataCache;
+    this.ctx.state.data = this.ctx.props.dataCache;
   }
 
   render () {

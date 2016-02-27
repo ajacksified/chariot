@@ -1,15 +1,18 @@
 import ListingPage from '../views/pages/listing';
 import BaseController from './base';
+import BaseLayout from '../views/layouts/base';
 
 class Listing extends BaseController {
   page = ListingPage;
+  pageLayout = BaseLayout;
 
   get data () {
-    const { query, params, api } = this.context;
+    const { query, params, api, env } = this.ctx;
     const { sort, commentId, context } = query;
     const { listingId } = params;
 
-    const commentParams = { 
+    const commentParams = {
+      env,
       sort: sort || 'confidence',
       linkId: listingId,
       query: {},
@@ -24,6 +27,7 @@ class Listing extends BaseController {
     }
 
     const linkParams = {
+      env,
       id: `t3_${listingId}`,
       query: {},
       origin: 'https://www.reddit.com',
@@ -38,8 +42,8 @@ class Listing extends BaseController {
   async preRender() {
     await super.preRender();
 
-    if (this.state.data.link) {
-      this.props.title = this.state.data.link.title;
+    if (this.ctx.state && this.ctx.state.data && this.ctx.state.data.link) {
+      this.ctx.props.title = this.ctx.state.data.link.title;
     }
   }
 }

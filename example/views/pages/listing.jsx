@@ -4,11 +4,12 @@ import Listing from '../components/listing';
 import Comment from '../components/comment';
 
 export default function IndexPage (props) {
+  console.log(props.data);
   if (props.data.comments && props.data.link) {
     return (
       <div>
         <Listing listing={ props.data.link } showSubreddit={ true } />
-        { props.data.comments.body.map(c => <Comment comment={ c } key={ c.id } />) }
+        { props.data.comments.map(c => <Comment comment={ c } key={ c.id } />) }
       </div>
     );
   }

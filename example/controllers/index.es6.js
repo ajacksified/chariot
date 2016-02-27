@@ -1,7 +1,6 @@
 import querystring from 'querystring';
 
 import BaseController from './base';
-const wrap = BaseController.wrap;
 
 import IndexPage from '../views/pages/indexPage';
 
@@ -38,19 +37,20 @@ class Index extends BaseController {
     return `${path}${qs}`;
   }
 
-  constructor (props) {
-    super(props);
-    const sub = this.context.params.subredditName;
+  constructor (ctx, app) {
+    super(ctx, app);
 
-    this.props.title = sub ? `r/${sub}` : 'reddit';
+    const sub = ctx.params.subredditName;
+    ctx.props.title = sub ? `r/${sub}` : 'reddit';
   }
 
   get data () {
-    const { query, params, api } = this.context;
+    const { query, params, api, env } = this.ctx;
     const { before, after, sort } = query;
     const { subredditName } = params;
 
     const linkGetParams = {
+      env,
       query: { sort, before, after, subredditName },
       origin: 'https://www.reddit.com',
     };
@@ -71,6 +71,7 @@ class Index extends BaseController {
 
     if (subredditName) {
       const subreddit = api.subreddits.get({
+        env,
         id: subredditName,
         query: {},
         origin: 'https://www.reddit.com',
@@ -83,7 +84,7 @@ class Index extends BaseController {
   }
 
   isStale (data) {
-    const { query, path, redirect } = this.context;
+    const { query, path, redirect } = this.ctx.context;
     const { body } = data;
 
     if (Index.isStalePage(query, body)) {
