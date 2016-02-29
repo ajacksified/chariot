@@ -1,7 +1,6 @@
 export default class Controller {
   static modifyContext (ctx, app) {
-    const props = {
-      ...ctx.props,
+    return {
       app,
       context: {
         path: ctx.path,
@@ -14,17 +13,22 @@ export default class Controller {
         env: ctx.env,
       },
       timings: {},
-      config: ctx.config,
     };
 
-    return props;
   }
 
   constructor (ctx, app) {
     const modifiedCtx = Controller.modifyContext(ctx, app);
-    ctx.props = modifiedCtx;
-    ctx.state = {};
+    ctx.props = { ...modifiedCtx, ...ctx.props };
     this.ctx = ctx;
+  }
+
+  dataCache(key) {
+    if (!this.ctx.props || !this.ctx.props.dataCache || !this.ctx.props.dataCache[key]) {
+      return;
+    }
+
+    return this.ctx.props.dataCache[key].body;
   }
 
   async get (ctx, next) {
@@ -45,7 +49,7 @@ export default class Controller {
       promiseMap.set(k, promises[k]);
     });
 
-    const dataCache = {};
+    const dataCache = this.ctx.props.dataCache || {};
 
     if (!synchronous || !promiseMap.size) {
       return { data: promiseMap, dataCache };
@@ -84,9 +88,8 @@ export default class Controller {
       data,
     } = await this.loadDataPreRender(this.ctx.synchronous, promises);
 
-    this.ctx.props.data = data;
+    this.ctx.props.dataPromises = data;
     this.ctx.props.dataCache = dataCache;
-    this.ctx.state.data = this.ctx.props.dataCache;
   }
 
   render () {

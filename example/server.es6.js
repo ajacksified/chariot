@@ -26,7 +26,7 @@ const keys = process.env.SECRET_KEYS || 'tomato,tomahto';
 const serverConfig = {
   processes: process.env.PROCESSES || 1,
   keys: keys.split(','),
-  ...config,
+  port: process.env.PORT || 4444,
 };
 
 // Enable koa middleware with options. See MIDDLEWARE.md for list of available
@@ -47,7 +47,7 @@ serverConfig.middleware = [
 ];
 
 // Create a new chariot instance, passing in our App constructor
-const chariot = new Chariot(serverConfig);
+const chariot = new Chariot(serverConfig, config);
 
 chariot.enableMiddleware(MIDDLEWARE.session(sessionOptions, chariot.server));
 
@@ -56,18 +56,14 @@ const sessionOptions = {};
 // Enable a custom middleware. Log the time before and after a request is
 // responded to.
 chariot.enableMiddleware(async (ctx, next) => {
-  console.log(`Requesting ${ctx.url} at ${new Date()}`);
-  await next();
   ctx.set('x-guid', ctx.guid);
-  console.log(`Responding to ${ctx.url} at ${new Date()}`);
+  await next();
 });
 
 chariot.enableMiddleware(async (ctx, next) => {
   ctx.api = new v1({
     debugLevel: 'info',
   });
-
-  ctx.config = config;
 
   await next();
 });

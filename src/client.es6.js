@@ -1,12 +1,11 @@
 import 'babel-polyfill';
 import throttle from 'lodash/throttle';
-import Horse from 'horse-react/src/client';
+import React from 'react-dom';
+import { ClientApp as Horse } from 'horse';
 
 import Chariot from './app';
 
-const App = Chariot(Horse);
-
-export default class Client {
+export default class Client extends Chariot(Horse) {
   static findLinkParent(el) {
     if (el.parentNode) {
       if (el.parentNode.tagName === 'A') {
@@ -17,9 +16,35 @@ export default class Client {
     }
   }
 
+  static onLoad(fns) {
+    const fireNow =
+      document.readyState === 'complete' || document.readyState === 'interactive';
+
+    fns.forEach(f => {
+      if (fireNow) {
+        f();
+      } else {
+        window.addEventListener('DOMContentLoaded', f);
+      }
+    });
+  }
+
+  static setTextContent(node, text) {
+    if (node.textContent) {
+      node.textContent = text;
+    } else if (node.innerText) {
+      node.innerText = text;
+    }
+  }
+
   constructor (config) {
+    super(config);
+
     this.config = config;
     this.config.mountPoint = document.getElementById(config.mountPoint || 'app-container');
+
+    this.start = this.start.bind(this);
+    this.redirect = this.redirect.bind(this);
 
     // cache common dom refs
     this.dom = {
@@ -31,33 +56,45 @@ export default class Client {
 
     this.referrer = document.referrer;
 
-    this.app = new App({
-      ...config,
-    });
-
     this.middleware = config.middleware || [];
     this.middleware.push(this.modifyContext.bind(this));
     this.middleware.forEach(m => this.enableMiddleware(m));
 
-    this.app.emitter.setMaxListeners(config.maxListeners || 30);
+    this.emitter.setMaxListeners(config.maxListeners || 30);
 
     this.history = window.history || window.location.history;
     this.scrollCache = {};
-    this.initialUrl = this.app.fullPathName();
+    this.initialUrl = this.fullPathName();
+  }
+
+  buildContext (href) {
+    const request = this.buildRequest(href);
+    const app = this;
+
+    return {
+      ...request,
+      request,
+      req: request,
+      redirect: app.redirect,
+      error: app.error,
+    };
   }
 
   loadRoutes(routes) {
-    routes(this.app);
+    routes(this);
   }
 
   async modifyContext (ctx, next) {
-    ctx.redirect = this.redirect.bind(this);
+    ctx.redirect = this.redirect;
     ctx.env = 'CLIENT';
+    ctx.props = ctx.props || {};
+    ctx.props.dataCache = this.getState('dataCache');
+    console.log('set props', ctx.props);
     await next();
   }
 
   enableMiddleware(middleware) {
-    this.app.router.use(middleware);
+    this.router.use(middleware);
   }
 
   bindScrolling () {
@@ -106,7 +143,7 @@ export default class Client {
         }
 
         const href = $link.getAttribute('href');
-        const currentUrl = this.app.fullPathName;
+        const currentUrl = this.fullPathName;
 
         // Don't actually follow the link unless it's internal
         if (
@@ -127,9 +164,9 @@ export default class Client {
         }
 
         this.pushState(null, null, href);
-        this.initialUrl = this.app.fullPathName();
+        this.initialUrl = this.fullPathName();
 
-        this.app.render(this.initialUrl, false).then((ctx) => {
+        this.render(this.initialUrl, false).then((ctx) => {
           this.dom.$body.scrollTop = 0;
           this.scrollCache[this.initialUrl] = 0;
 
@@ -140,10 +177,10 @@ export default class Client {
       });
 
       window.addEventListener('popstate', () => {
-        const href = this.app.fullPathName();
+        const href = this.fullPathName();
         this.scrollCache[this.initialUrl] = window.scrollY;
 
-        this.app.render(href, false).then((props) => {
+        this.render(href, false).then((props) => {
           if (this.scrollCache[href]) {
             this.dom.$body.scrollTop = this.scrollCache[href];
           }
@@ -164,18 +201,14 @@ export default class Client {
 
   redirect(url) {
     this.pushState(null, null, url);
-    this.app.render(this.app.fullPathName(), false).then((props) => {
+    this.render(this.fullPathName(), false).then((props) => {
       this.setTitle(props.title);
     });
   }
 
   setTitle(title) {
     if (title) {
-      if (this.dom.$title.textContent) {
-        this.dom.$title.textContent = title;
-      } else if (this.dom.$title.innerText) {
-        this.dom.$title.innerText = title;
-      }
+      Client.setTextContent(this.dom.$title, title);
     }
   }
 
@@ -184,11 +217,53 @@ export default class Client {
       throw new Error('Attempted to run `start` twice');
     }
 
-    this.app.render(this.initialUrl, true).then(() => {
+    Object.keys(this.config).forEach(key => {
+      if (window.bootstrap.config[key]) {
+        this.config[key] = window.bootstrap.config[key];
+      }
+    });
+
+    if (window.bootstrap) {
+      this.resetState(window.bootstrap);
+    }
+
+    this.render(this.initialUrl, true).then(() => {
       this.bindScrolling();
       this.bindResize();
       this.bindHistory();
       this.started = true;
+      this.setState('dataCache');
     });
+  }
+
+  async render (href, firstLoad, modifyContext) {
+    const mountPoint = this.dom.$mount;
+
+    if (!mountPoint) {
+      throw new Error(
+        'Please define a `mountPoint` on your ClientApp for the react element to render to.'
+      );
+    }
+
+    let ctx = this.buildContext(href);
+
+    if (modifyContext) {
+      ctx = modifyContext(ctx);
+    }
+
+    if (firstLoad) {
+      ctx.props = this.getState();
+    }
+
+    await this.route(ctx);
+
+    try {
+      React.render(ctx.body, mountPoint);
+    } catch (e) {
+      console.log(e);
+      //this.error(e, ctx, this);
+    }
+
+    return Promise.resolve(ctx);
   }
 }

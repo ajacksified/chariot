@@ -23,4 +23,4 @@ chariot.enableMiddleware(async (ctx, next) => {
 // Load in url routes
 chariot.loadRoutes(routes);
 
-chariot.start();
+Chariot.onLoad([chariot.start]);

@@ -50,7 +50,7 @@ export default class WrappedPage extends React.Component {
     if (props.dataCache) {
       let k;
       for (k in props.dataCache) {
-        props.data.set(k, Promise.resolve(props.dataCache[k]));
+        props.dataPromises.set(k, Promise.resolve(props.dataCache[k]));
 
         if (props.dataCache[k] && props.dataCache[k].body) {
           this.state.data[k] = props.dataCache[k].body;
@@ -75,20 +75,18 @@ export default class WrappedPage extends React.Component {
         }
       });
 
-      if (isEqual([...this.props.data.keys()].sort(), Object.keys(this.state.data).sort())) {
+      if (isEqual([...this.props.dataPromises.keys()].sort(), Object.keys(this.state.data).sort())) {
         this.finish();
       }
     }
   }
 
   componentDidMount() {
-    this.watchProperties(this.props.data, this.props.dataCache);
+    this.watchProperties(this.props.dataPromises, this.props.dataCache);
   }
 
   watch (property, promise) {
     promise.then((p) => {
-      console.log(property, p);
-
       this.setState({
         data: {
           ...this.state.data,
@@ -100,7 +98,7 @@ export default class WrappedPage extends React.Component {
         },
       });
 
-      if (isEqual([...this.props.data.keys()].sort(), Object.keys(this.state.data).sort())) {
+      if (isEqual([...this.props.dataPromises.keys()].sort(), Object.keys(this.state.data).sort())) {
         this.finish();
       }
     }, (e) => {
@@ -132,8 +130,7 @@ export default class WrappedPage extends React.Component {
   }
 
   // Use `render` to return the contents of `this.page`. In this example, we're
-  // going to use horse-react to render React, so we'll just return a React
-  // element. `render` async.
+  // going to use React, so we'll just return a React element. `render` async.
   render () {
     const { Layout, PageLayout=<div />, Page } = this.props;
     const props = this.getPageProps();

@@ -14,7 +14,6 @@
   "dependencies": {
     "gulp-minify-css": "^1.2.4",
     "horse-cart": "0.0.5",
-    "horse-react": "git://github.com/ajacksified/horse-react.git#196b95641aaa17049d3bb5bff93aafaf19b9be8d",
     "koa": "^2.0.0-alpha.3",
     "koa-compress": "^1.0.9",
     "koa-conditional-get": "^1.0.3",

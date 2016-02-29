@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom/server';
+
 import Koa from 'koa';
 import staticFiles from 'koa-static';
 import compress from 'koa-compress';
@@ -9,26 +12,25 @@ import csrf from 'koa-csrf';
 import uuid from 'node-uuid';
 import convert from 'koa-convert';
 
-import Horse from 'horse-react/src/server';
-import app from './app';
+import { App as Horse } from 'horse';
+import Chariot from './app';
 
-const App = app(Horse);
+const App = Chariot(Horse);
 
-function requestGUID () {
+export function requestGUID () {
   return async function (ctx, next) {
     ctx.guid = uuid.v4();
     await next();
   };
 }
 
-function setServerContextProps(server) {
+export function setServerContextProps(server) {
   return async function (ctx, next) {
     ctx.synchronous = true;
     ctx.includeLayout = true;
 
-    // TODO autload build manifest file
     ctx.props = {
-      config: server.config,
+      config: server.app.config,
     };
 
     await next();
@@ -46,26 +48,53 @@ export const MIDDLEWARE_MAP = {
   requestGUID,
 };
 
+export function injectBootstrap(ctx, format) {
+  let p = { ...ctx.props };
+
+  if (format) {
+    p = format({...ctx.props});
+  }
+
+  delete p.app;
+  delete p.api;
+  delete p.manifest;
+  delete p.dataPromises;
+
+  const bootstrap = safeStringify(p);
+
+  const body = ctx.body;
+  const bodyIndex = body.lastIndexOf('</body>');
+  const template = `<script>window.bootstrap=${bootstrap}</script>`;
+  ctx.body = body.slice(0, bodyIndex) + template + body.slice(bodyIndex);
+}
+
+export function safeStringify (obj) {
+  return JSON.stringify(obj)
+    .replace(/&/g, '\\u0026')
+    .replace(/</g, '\\u003C')
+    .replace(/>/g, '\\u003E');
+}
+
 const GeneratorFunction = Object.getPrototypeOf(eval("(function*(){})")).constructor;
 
 export default class Server {
-  constructor (config) {
-    this.config = config;
+  constructor (serverConfig, appConfig) {
+    this.config = serverConfig;
 
-    this.middleware = config.middleware || [];
+    this.middleware = serverConfig.middleware || [];
     this.middleware.push(setServerContextProps(this));
 
-    this.app = new App(config);
+    this.app = new App(appConfig);
 
-    this.warn(config);
+    this.warn(serverConfig);
 
     this.server = new Koa();
     this.server.keys = this.config.keys;
   }
 
-  warn (config) {
-    if (!config.keys) {
-      console.log('No `keys` passed into config; your sessions are insecure.');
+  warn (serverConfig) {
+    if (!serverConfig.keys) {
+      console.log('No `keys` passed into serverConfig; your sessions are insecure.');
     }
   }
 
@@ -75,6 +104,39 @@ export default class Server {
 
   loadRoutes(routes) {
     routes(this.app);
+  }
+
+  async render (ctx) {
+    //todo figure out html template
+    ctx.type = 'text/html; charset=utf-8';
+
+    try {
+      if (React.isValidElement(ctx.body)) {
+        let body = ReactDOM.renderToStaticMarkup(ctx.body);
+        ctx.body = body;//layout.replace(/!!CONTENT!!/, body);
+      }
+    } catch (e) {
+      ctx.props.app.error(e, ctx, ctx.props.app);
+      await this.render(ctx);
+    }
+  }
+
+  serverRender (app) {
+    return async (ctx, next) => {
+      ctx.timings = {};
+
+      if (ctx.accepts('html')) {
+        const routeStart = Date.now();
+        await app.route(ctx, next);
+        ctx.timings.route = Date.now() - routeStart;
+      }
+
+      const renderStart = Date.now();
+      await this.render(ctx);
+      ctx.timings.render = Date.now() - renderStart;
+
+      await injectBootstrap(ctx, this.config.formatBootstrap);
+    }
   }
 
   start() {
@@ -92,7 +154,7 @@ export default class Server {
       this.server.use(middleware);
     });
 
-    this.server.use(Horse.serverRender(this.app));
+    this.server.use(this.serverRender(this.app));
     this.server.listen(this.config.port);
 
     this.started = true;

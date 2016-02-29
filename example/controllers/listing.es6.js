@@ -41,9 +41,10 @@ class Listing extends BaseController {
 
   async preRender() {
     await super.preRender();
+    const link = this.dataCache('link');
 
-    if (this.ctx.state && this.ctx.state.data && this.ctx.state.data.link) {
-      this.ctx.props.title = this.ctx.state.data.link.title;
+    if (link) {
+      this.ctx.props.title = link.title;
     }
   }
 }

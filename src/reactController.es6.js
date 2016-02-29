@@ -10,8 +10,7 @@ export default class ReactController extends Controller {
   page = null;
 
   // Use `render` to return the contents of `this.page`. In this example, we're
-  // going to use horse-react to render React, so we'll just return a React
-  // element. `render` async.
+  // going to use React, so we'll just return a React element. `render` async.
   render () {
     const { ctx } = this;
     const Page = this.page;
