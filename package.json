@@ -57,7 +57,7 @@
     "gulp-util": "^3.0.7",
     "node-notifier": "^4.5.0",
     "path": "^0.12.7",
-    "snoode": "git://github.com/ajacksified/snoode.git#ddf3a5afe4d0a0276b4a4f931d6ce293fa844135",
+    "snoode": "git://github.com/ajacksified/snoode.git#040555b3a60e53ff1e43758eea8553bd3f190fd7",
     "stream-combiner2": "^1.1.1",
     "streamqueue": "^1.1.1",
     "vinyl-source-stream": "^1.1.0",

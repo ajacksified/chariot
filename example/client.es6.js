@@ -1,7 +1,7 @@
 // server.es6.js
 
 import config from './config';
-import { v1 } from 'snoode';
+import Snoode from 'snoode';
 
 // Import the Chariot library.
 import Chariot from 'chariot/src/client';
@@ -13,7 +13,7 @@ import routes from './routes';
 const chariot = new Chariot(config);
 
 chariot.enableMiddleware(async (ctx, next) => {
-  ctx.api = new v1({
+  ctx.api = new Snoode({
     debugLevel: 'info',
   });
 
