@@ -1,6 +1,6 @@
 {
   "name": "chariot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A framework built on top of horse",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,6 @@
   "author": "Jack Lawson <ajacksified@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "gulp-minify-css": "^1.2.4",
     "horse-cart": "0.0.5",
     "koa": "^2.0.0-alpha.3",
     "koa-compress": "^1.0.9",
@@ -36,31 +35,6 @@
     "babel-polyfill": "^6.5.0",
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
-    "babel-register": "^6.5.2",
-    "babelify": "^7.2.0",
-    "browserify": "^13.0.0",
-    "del": "^2.2.0",
-    "envify": "^3.4.0",
-    "exorcist": "^0.4.0",
-    "gulp": "^3.9.1",
-    "gulp-buffer": "0.0.2",
-    "gulp-concat": "^2.6.0",
-    "gulp-consolidate": "^0.1.2",
-    "gulp-iconfont": "^6.0.0",
-    "gulp-if": "^2.0.0",
-    "gulp-less": "^3.0.5",
-    "gulp-livereload": "^3.8.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-rev": "^7.0.0",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^1.5.3",
-    "gulp-util": "^3.0.7",
-    "node-notifier": "^4.5.0",
-    "path": "^0.12.7",
-    "snoode": "git://github.com/ajacksified/snoode.git#040555b3a60e53ff1e43758eea8553bd3f190fd7",
-    "stream-combiner2": "^1.1.1",
-    "streamqueue": "^1.1.1",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0"
+    "babel-register": "^6.5.2"
   }
 }
