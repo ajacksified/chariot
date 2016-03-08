@@ -1,6 +1,6 @@
 {
   "name": "chariot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A framework built on top of horse",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "Jack Lawson <ajacksified@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "horse-cart": "0.0.5",
+    "horse": "git://github.com/ajacksified/horse.git#0a6dfbfd49c43526cc5e55a0304f0e4e2aa4e547",
     "koa": "^2.0.0-alpha.3",
     "koa-compress": "^1.0.9",
     "koa-conditional-get": "^1.0.3",
