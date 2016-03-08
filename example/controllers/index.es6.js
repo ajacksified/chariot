@@ -1,6 +1,7 @@
 import BaseController from './base';
 
 import IndexPage from '../views/pages/indexPage';
+import WrappedPromise from 'chariot/src/wrappedPromise';
 
 class Index extends BaseController {
   page = IndexPage;
@@ -13,26 +14,28 @@ class Index extends BaseController {
   }
 
   get data () {
-    const { query, params, api, env } = this.ctx;
+    const { query, params, api } = this.ctx;
     const { before, after, sort } = query;
     const { subredditName } = params;
 
     const linkGetParams = {
-      env,
-      query: { sort, before, after, subredditName },
-      origin: 'https://www.reddit.com',
+      sort,
+      before,
+      after,
+      subredditName,
     };
 
-    const links = api.links.get(linkGetParams);
+    /*
+    const links = new WrappedPromise(() => api.links.get(linkGetParams))
+                      .preCall(() => [{ title: 'test' }]);
+    */
+    const links = () => api.links.get(linkGetParams);
 
     const data = { links };
 
     if (subredditName) {
-      const subreddit = api.subreddits.get({
-        env,
+      const subreddit = () => api.subreddits.get({
         id: subredditName,
-        query: {},
-        origin: 'https://www.reddit.com',
       });
 
       data.subreddit = subreddit;

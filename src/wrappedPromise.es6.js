@@ -1,49 +1,41 @@
 export default class WrappedPromise {
-  constructor (promise) {
-    this.originalPromise = promise;
+  constructor (promiseFn) {
+    this.call = promiseFn;
 
-    this.wrapped = this.originalPromise
-                    .then(this.resolve, this.reject);
+    this.fire = this.fire.bind(this);
+    this.then = this.then.bind(this);
+    this.error = this.error.bind(this);
   }
 
   preCall (fn) {
+    this.res = fn();
     this._hasPrecall = true;
-    let res;
+    this._promise = Promise.resolve(this.res);
+    return this;
+  }
 
-    try {
-      res = fn();
-
-      if (res !== undefined) {
-        this.wrapped = new Promise((resolve) => resolve(res));
-      }
-    } catch (e) {
-      this.wrapped = new Promise((_, reject) => reject(e));
+  fire () {
+    if (!this._promise) {
+      this._promise = this.call();
     }
 
-    // if `res` is not undefined, `dataCache` will be set to preCall in the
-    // controller.
-    this.res = res;
+    return this;
   }
 
-  resolve (res) {
-    this._res = res;
-    return res;
+  then () {
+    if (!this._promise) { this.fire(); }
+
+    return this._promise.then(...arguments);
   }
 
-  reject (err) {
-    this._err = err;
-    throw new Error(err);
-  }
+  error () {
+    if (!this._promise) { this.fire(); }
 
-  then (...args) {
-    return this.wrapped.then.call(this, args);
-  }
-
-  error (...args) {
-    return this.wrapped.then.call(this, args);
+    return this._promise.error(...arguments);
   }
 
   preRender (fn) {
     fn(this._res, this._err);
+    return this;
   }
 }

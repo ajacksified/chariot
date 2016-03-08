@@ -1,3 +1,5 @@
+import WrappedPromise from './wrappedPromise';
+
 export default class Controller {
   static modifyContext (ctx, app) {
     return {
@@ -44,12 +46,26 @@ export default class Controller {
 
   async loadDataPreRender (synchronous, promises={}) {
     const promiseMap = new Map();
+    const dataCache = this.ctx.props.dataCache || {};
 
     Object.keys(promises).forEach(k => {
-      promiseMap.set(k, promises[k]);
-    });
+      let apiCall;
 
-    const dataCache = this.ctx.props.dataCache || {};
+      if (promises[k] instanceof WrappedPromise) {
+        apiCall = promises[k].fire();
+      } else {
+        apiCall = promises[k]();
+      }
+
+      // If there is data in the dataCache, such as from the first request on
+      // the client side, set the promise to resolve. Otherwise, set the promise
+      // to whatever's in this.data, which will kick off the request.
+      if (dataCache[k]) {
+        promiseMap.set(k, Promise.resolve(dataCache[k]));
+      } else {
+        promiseMap.set(k, apiCall);
+      }
+    });
 
     if (!synchronous || !promiseMap.size) {
       return { data: promiseMap, dataCache };
@@ -57,7 +73,6 @@ export default class Controller {
 
     // loop through promises, see if any have the value set from a preCall. if
     // they do, set it immediately rather than calling out to the promise.
-
     const promiseKeys = [];
     const promiseValues = [];
 

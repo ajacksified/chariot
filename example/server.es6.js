@@ -18,7 +18,7 @@ config.manifest = {
 import routes from './routes';
 import serverRoutes from './serverRoutes';
 
-import { v1 } from 'snoode';
+import Snoode from 'snoode';
 
 const keys = process.env.SECRET_KEYS || 'tomato,tomahto';
 
@@ -61,7 +61,7 @@ chariot.enableMiddleware(async (ctx, next) => {
 });
 
 chariot.enableMiddleware(async (ctx, next) => {
-  ctx.api = new v1({
+  ctx.api = new Snoode({
     debugLevel: 'info',
   });
 

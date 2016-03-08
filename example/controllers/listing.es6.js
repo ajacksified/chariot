@@ -34,8 +34,8 @@ class Listing extends BaseController {
     };
 
     return {
-      link: api.links.get(linkParams),
-      comments: api.comments.get(commentParams),
+      link: () => api.links.get(linkParams),
+      comments: () => api.comments.get(commentParams),
     };
   }
 
