@@ -16,7 +16,6 @@ export default class Controller {
       },
       timings: {},
     };
-
   }
 
   constructor (ctx, app) {
@@ -98,13 +97,17 @@ export default class Controller {
   async preRender () {
     const promises = this.data;
 
-    const {
-      dataCache,
-      data,
-    } = await this.loadDataPreRender(this.ctx.synchronous, promises);
+    try {
+      const {
+        dataCache,
+        data,
+      } = await this.loadDataPreRender(this.ctx.synchronous, promises);
 
-    this.ctx.props.dataPromises = data;
-    this.ctx.props.dataCache = dataCache;
+      this.ctx.props.dataPromises = data;
+      this.ctx.props.dataCache = dataCache;
+    } catch (e) {
+      return this.ctx.app.error(e);
+    }
   }
 
   render () {

@@ -19,12 +19,11 @@ export default class WrappedPage extends React.Component {
   };
 
   getChildContext() {
-    const { api, app, context, cookies } = this.props;
+    const { api, app, context } = this.props;
 
     return {
       api,
       app,
-      cookies,
       path: context.path,
       query: context.query,
       params: context.object,
