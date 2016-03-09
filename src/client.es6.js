@@ -92,7 +92,6 @@ export default class Client extends Chariot(Horse) {
     ctx.env = 'CLIENT';
     ctx.props = ctx.props || {};
     ctx.props.dataCache = this.getState('dataCache');
-    console.log('set props', ctx.props);
     await next();
   }
 
@@ -264,7 +263,7 @@ export default class Client extends Chariot(Horse) {
       React.render(ctx.body, mountPoint);
     } catch (e) {
       console.log(e);
-      //this.error(e, ctx, this);
+      this.error(e, ctx, this);
     }
 
     return Promise.resolve(ctx);

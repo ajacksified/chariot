@@ -90,11 +90,11 @@ export default class WrappedPage extends React.Component {
       this.setState({
         data: {
           ...this.state.data,
-          [property]: p.body ? p.body : p,
+          [property]: p && p.body ? p.body : p,
         },
         meta: {
           ...this.state.meta,
-          [property]: p.headers,
+          [property]: p ? p.headers : {},
         },
       });
 
