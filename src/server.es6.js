@@ -65,9 +65,12 @@ export function injectBootstrap(ctx, format) {
   const bootstrap = safeStringify(p);
 
   const body = ctx.body;
-  const bodyIndex = body.lastIndexOf('</body>');
-  const template = `<script>window.bootstrap=${bootstrap}</script>`;
-  ctx.body = body.slice(0, bodyIndex) + template + body.slice(bodyIndex);
+
+  if (body && body.lastIndexOf) {
+    const bodyIndex = body.lastIndexOf('</body>');
+    const template = `<script>window.bootstrap=${bootstrap}</script>`;
+    ctx.body = body.slice(0, bodyIndex) + template + body.slice(bodyIndex);
+  }
 }
 
 export function safeStringify (obj) {
