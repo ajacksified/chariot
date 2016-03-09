@@ -1,4 +1,6 @@
 import 'babel-polyfill';
+import cookies from 'cookies-js';
+
 import throttle from 'lodash/throttle';
 import React from 'react-dom';
 import { ClientApp as Horse } from 'horse';
@@ -85,6 +87,7 @@ export default class Client extends Chariot(Horse) {
   }
 
   async modifyContext (ctx, next) {
+    ctx.cookies = cookies;
     ctx.redirect = this.redirect;
     ctx.env = 'CLIENT';
     ctx.props = ctx.props || {};

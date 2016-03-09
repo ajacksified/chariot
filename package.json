@@ -12,6 +12,7 @@
   "author": "Jack Lawson <ajacksified@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "cookies-js": "^1.2.2",
     "horse": "git://github.com/ajacksified/horse.git#0a6dfbfd49c43526cc5e55a0304f0e4e2aa4e547",
     "koa": "^2.0.0-alpha.3",
     "koa-bodyparser": "^2.0.1",
