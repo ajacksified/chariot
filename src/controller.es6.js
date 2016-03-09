@@ -84,12 +84,16 @@ export default class Controller {
       }
     });
 
-    // Fulfill the non-fulfilled promises
-    const promiseResults = await Promise.all([...promiseValues]);
+    try {
+      // Fulfill the non-fulfilled promises
+      const promiseResults = await Promise.all([...promiseValues]);
 
-    promiseValues.forEach((v, i) => {
-      dataCache[promiseKeys[i]] = promiseResults[i];
-    });
+      promiseValues.forEach((v, i) => {
+        dataCache[promiseKeys[i]] = promiseResults[i];
+      });
+    } catch (e) {
+      return this.ctx.props.app.error(e, this.ctx, this.ctx.props.app);
+    }
 
     return { data: promiseMap, dataCache };
   }
@@ -106,7 +110,7 @@ export default class Controller {
       this.ctx.props.dataPromises = data;
       this.ctx.props.dataCache = dataCache;
     } catch (e) {
-      return this.ctx.app.error(e);
+      return this.ctx.props.app.error(e, this.ctx, this.ctx.props.app);
     }
   }
 

@@ -95,6 +95,10 @@ export default class Server {
 
     this.server = new Koa();
     this.server.keys = this.config.keys;
+
+    if (this.config.errorHandler) {
+      this.error = this.config.errorHandler;
+    }
   }
 
   warn (serverConfig) {
