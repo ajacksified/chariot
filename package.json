@@ -1,6 +1,6 @@
 {
   "name": "chariot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A framework built on top of horse",
   "main": "index.js",
   "scripts": {
