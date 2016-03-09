@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/server';
 
 import Koa from 'koa';
 import staticFiles from 'koa-static';
+import body from 'koa-bodyparser';
 import compress from 'koa-compress';
 import session from 'koa-session';
 import conditionalGet from 'koa-conditional-get';
@@ -46,6 +47,7 @@ export const MIDDLEWARE_MAP = {
   etag,
   csrf,
   requestGUID,
+  body,
 };
 
 export function injectBootstrap(ctx, format) {

@@ -14,6 +14,7 @@
   "dependencies": {
     "horse": "git://github.com/ajacksified/horse.git#0a6dfbfd49c43526cc5e55a0304f0e4e2aa4e547",
     "koa": "^2.0.0-alpha.3",
+    "koa-bodyparser": "^2.0.1",
     "koa-compress": "^1.0.9",
     "koa-conditional-get": "^1.0.3",
     "koa-convert": "^1.2.0",
