@@ -61,6 +61,7 @@ export function injectBootstrap(ctx, format) {
   delete p.api;
   delete p.manifest;
   delete p.dataPromises;
+  delete p.context;
 
   const bootstrap = safeStringify(p);
 

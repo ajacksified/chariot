@@ -20,7 +20,7 @@ export default class Controller {
 
   constructor (ctx, app) {
     const modifiedCtx = Controller.modifyContext(ctx, app);
-    ctx.props = { ...modifiedCtx, ...ctx.props };
+    this.props = { ...modifiedCtx, ...ctx.props };
     this.ctx = ctx;
   }
 

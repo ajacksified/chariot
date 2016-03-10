@@ -4,37 +4,6 @@ import { isEqual } from 'lodash/lang';
 // A reactController is also a React component.
 // Define a `render` function at minimum. In this case, we want to
 export default class WrappedPage extends React.Component {
-  static childContextTypes = {
-    api: React.PropTypes.object,
-    app: React.PropTypes.object,
-    cookies: React.PropTypes.object,
-    path: React.PropTypes.string,
-    query: React.PropTypes.object,
-    params: React.PropTypes.string,
-    url: React.PropTypes.string,
-    userAgent: React.PropTypes.string,
-    csrf: React.PropTypes.string,
-    referrer: React.PropTypes.string,
-    env: React.PropTypes.string,
-  };
-
-  getChildContext() {
-    const { api, app, context } = this.props;
-
-    return {
-      api,
-      app,
-      path: context.path,
-      query: context.query,
-      params: context.object,
-      url: context.path,
-      userAgent: context.userAgent,
-      csrf: context.csrf,
-      referrer: context.referer,
-      env: context.env,
-    };
-  }
-
   constructor (props) {
     super(props);
 

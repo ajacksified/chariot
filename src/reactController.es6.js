@@ -1,4 +1,5 @@
 import React from 'react';
+import omit from 'lodash/object/omit';
 
 import Controller from './controller';
 import Wrap from './wrappedPage';
@@ -27,6 +28,7 @@ export default class ReactController extends Controller {
     return (
       <Wrap
         { ...props }
+        context={ omit(ctx, 'props') }
         Layout={ Layout }
         PageLayout={ PageLayout }
         Page={ Page }
