@@ -167,6 +167,6 @@ export default class Server {
     this.server.listen(this.config.port);
 
     this.started = true;
-    console.log(`Server istening on ${this.config.port}`);
+    console.log(`Server listening on ${this.config.port}`);
   }
 }
