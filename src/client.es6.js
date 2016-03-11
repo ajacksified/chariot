@@ -92,6 +92,12 @@ export default class Client extends Chariot(Horse) {
     ctx.env = 'CLIENT';
     ctx.props = ctx.props || {};
     ctx.props.dataCache = this.getState('dataCache');
+
+    const csrf = document.getElementById('csrf-token-meta-tag');
+    if (csrf) {
+      ctx.csrf = csrf.content;
+    }
+
     await next();
   }
 

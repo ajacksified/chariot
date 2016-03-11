@@ -30,9 +30,8 @@ export function setServerContextProps(server) {
     ctx.synchronous = true;
     ctx.includeLayout = true;
 
-    ctx.props = {
-      config: server.app.config,
-    };
+    ctx.config = server.app.config;
+    ctx.props = { config: ctx.config };
 
     await next();
   };
@@ -54,7 +53,7 @@ export function injectBootstrap(ctx, format) {
   let p = { ...ctx.props };
 
   if (format) {
-    p = format({...ctx.props});
+    p = format(p);
   }
 
   delete p.app;
@@ -126,7 +125,8 @@ export default class Server {
         ctx.body = body;//layout.replace(/!!CONTENT!!/, body);
       }
     } catch (e) {
-      ctx.props.app.error(e, ctx, ctx.props.app);
+      console.log(e);
+      ctx.app.error(e, ctx, ctx.app);
       await this.render(ctx);
     }
   }

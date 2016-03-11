@@ -1,5 +1,5 @@
 import React from 'react';
-import omit from 'lodash/object/omit';
+import { omit } from 'lodash/object';
 
 import Controller from './controller';
 import Wrap from './wrappedPage';
@@ -13,11 +13,9 @@ export default class ReactController extends Controller {
   // Use `render` to return the contents of `this.page`. In this example, we're
   // going to use React, so we'll just return a React element. `render` async.
   render () {
-    const { ctx } = this;
+    const { ctx, props } = this;
     const Page = this.page;
     const PageLayout = this.pageLayout;
-
-    const props = ctx.props;
 
     let Layout;
 

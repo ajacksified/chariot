@@ -4,9 +4,14 @@ export default function (horse) {
       return async function buildController (ctx, next) {
         // TODO why do these have to be lets? what's going on. Something is
         // hanging on to a reference somewhere.
-        let controller = new klass(ctx, this);
+        ctx.app = this;
+        let controller = new klass(ctx);
         await controller.get(ctx, next);
       }.bind(this);
+    }
+
+    error (e) {
+      throw(e);
     }
   };
 }

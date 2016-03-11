@@ -1,51 +1,35 @@
 import WrappedPromise from './wrappedPromise';
 
 export default class Controller {
-  static modifyContext (ctx, app) {
-    return {
-      app,
-      context: {
-        path: ctx.path,
-        query: ctx.query,
-        params: ctx.object,
-        url: ctx.path,
-        userAgent: ctx.userAgent,
-        csrf: ctx.csrf,
-        referrer: ctx.headers.referer,
-        env: ctx.env,
-      },
-      timings: {},
-    };
-  }
-
-  constructor (ctx, app) {
-    const modifiedCtx = Controller.modifyContext(ctx, app);
-    this.props = { ...modifiedCtx, ...ctx.props };
+  constructor (ctx) {
+    this.props = { timings: {}, dataCache: {}, ...ctx.props };
     this.ctx = ctx;
   }
 
   dataCache(key) {
-    if (!this.ctx.props || !this.ctx.props.dataCache || !this.ctx.props.dataCache[key]) {
+    console.log(!!this.props, !!this.props.dataCache, key, Object.keys(this.props.dataCache));
+    if (!this.props || !this.props.dataCache || !this.props.dataCache[key]) {
       return;
     }
 
-    return this.ctx.props.dataCache[key].body;
+    return this.props.dataCache[key].body ? this.props.dataCache[key].body : this.props.dataCache[key];
   }
 
   async get (ctx, next) {
-    ctx.props.timings = {};
-    ctx.props.timings.start = Date.now();
+    this.props.timings = {};
+    this.props.timings.start = Date.now();
     await this.preRender();
-    ctx.props.timings.preRender = Date.now() - ctx.props.timings.start;
+    this.props.timings.preRender = Date.now() - this.props.timings.start;
     ctx.body = this.render();
-    ctx.props.timings.render = Date.now() - ctx.props.timings.preRender;
+    this.props.timings.render = Date.now() - this.props.timings.preRender;
+    ctx.props = this.props;
 
     return await next();
   }
 
   async loadDataPreRender (synchronous, promises={}) {
     const promiseMap = new Map();
-    const dataCache = this.ctx.props.dataCache || {};
+    const dataCache = this.props.dataCache || {};
 
     Object.keys(promises).forEach(k => {
       let apiCall;
@@ -92,7 +76,7 @@ export default class Controller {
         dataCache[promiseKeys[i]] = promiseResults[i];
       });
     } catch (e) {
-      return this.ctx.props.app.error(e, this.ctx, this.ctx.props.app);
+      return this.ctx.app.error(e, this.ctx, this.ctx.app);
     }
 
     return { data: promiseMap, dataCache };
@@ -107,10 +91,10 @@ export default class Controller {
         data,
       } = await this.loadDataPreRender(this.ctx.synchronous, promises);
 
-      this.ctx.props.dataPromises = data;
-      this.ctx.props.dataCache = dataCache;
+      this.props.dataPromises = data;
+      this.props.dataCache = dataCache;
     } catch (e) {
-      return this.ctx.props.app.error(e, this.ctx, this.ctx.props.app);
+      return this.ctx.app.error(e, this.ctx, this.ctx.app);
     }
   }
 
