@@ -7,7 +7,6 @@ export default class Controller {
   }
 
   dataCache(key) {
-    console.log(!!this.props, !!this.props.dataCache, key, Object.keys(this.props.dataCache));
     if (!this.props || !this.props.dataCache || !this.props.dataCache[key]) {
       return;
     }
