@@ -13,8 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "cookies-js": "^1.2.2",
-    "horse": "git://github.com/ajacksified/horse.git#0a6dfbfd49c43526cc5e55a0304f0e4e2aa4e547",
-    "koa": "^2.0.0-alpha.3",
+    "horse": "git://github.com/ajacksified/horse.git#d5c7152acca1debb69f7c65eb790281ffba935bf",
+    "koa": "^2.0.0",
     "koa-bodyparser": "^2.0.1",
     "koa-compress": "^1.0.9",
     "koa-conditional-get": "^1.0.3",
@@ -25,7 +25,9 @@
     "koa-session": "^3.3.1",
     "koa-static": "^2.0.0",
     "lodash": "^4.6.1",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "^1.4.7",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel-core": "^6.5.2",
