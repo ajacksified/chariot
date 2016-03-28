@@ -50,6 +50,8 @@ export const MIDDLEWARE_MAP = {
 };
 
 export function injectBootstrap(ctx, format) {
+  if (!ctx.injectBootstrap) { return; }
+
   let p = { ...ctx.props };
 
   if (format) {
@@ -123,6 +125,7 @@ export default class Server {
       if (React.isValidElement(ctx.body)) {
         let body = ReactDOM.renderToStaticMarkup(ctx.body);
         ctx.body = body;//layout.replace(/!!CONTENT!!/, body);
+        ctx.injectBootstrap = true;
       }
     } catch (e) {
       console.log(e);
