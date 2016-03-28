@@ -82,7 +82,7 @@ export function safeStringify (obj) {
     .replace(/>/g, '\\u003E');
 }
 
-const GeneratorFunction = Object.getPrototypeOf(eval("(function*(){})")).constructor;
+const GeneratorFunction = Object.getPrototypeOf(eval('(function*(){})')).constructor;
 
 export default class Server {
   constructor (serverConfig, appConfig) {
@@ -118,12 +118,11 @@ export default class Server {
   }
 
   async render (ctx) {
-    //todo figure out html template
     ctx.type = 'text/html; charset=utf-8';
 
     try {
       if (React.isValidElement(ctx.body)) {
-        let body = ReactDOM.renderToStaticMarkup(ctx.body);
+        const body = ReactDOM.renderToStaticMarkup(ctx.body);
         ctx.body = body;//layout.replace(/!!CONTENT!!/, body);
         ctx.injectBootstrap = true;
       }
@@ -149,7 +148,7 @@ export default class Server {
       ctx.timings.render = Date.now() - renderStart;
 
       await injectBootstrap(ctx, this.config.formatBootstrap);
-    }
+    };
   }
 
   start() {
