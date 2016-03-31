@@ -27,6 +27,7 @@ export function requestGUID () {
 
 export function setServerContextProps(server) {
   return async function (ctx, next) {
+    ctx.env = 'SERVER';
     ctx.synchronous = true;
     ctx.includeLayout = true;
 
