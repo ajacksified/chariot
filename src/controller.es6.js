@@ -11,7 +11,8 @@ export default class Controller {
       return;
     }
 
-    return this.props.dataCache[key].body ? this.props.dataCache[key].body : this.props.dataCache[key];
+    return this.props.dataCache[key].body ?
+           this.props.dataCache[key].body : this.props.dataCache[key];
   }
 
   async get (ctx, next) {
